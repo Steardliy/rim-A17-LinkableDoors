@@ -1,0 +1,4 @@
+C:\GitLocal\tmp\LinkableDoors\bin\Debug\LinkableDoors.dll
+C:\GitLocal\tmp\LinkableDoors\bin\Debug\LinkableDoors.pdb
+C:\GitLocal\tmp\LinkableDoors\obj\Debug\LinkableDoors.dll
+C:\GitLocal\tmp\LinkableDoors\obj\Debug\LinkableDoors.pdb

@@ -1,0 +1,5 @@
+C:\GitLocal\tmp\LinkableDoors\bin\Release\LinkableDoors.dll
+C:\GitLocal\tmp\LinkableDoors\bin\Release\LinkableDoors.pdb
+C:\GitLocal\tmp\LinkableDoors\obj\Release\LinkableDoors.csprojResolveAssemblyReference.cache
+C:\GitLocal\tmp\LinkableDoors\obj\Release\LinkableDoors.dll
+C:\GitLocal\tmp\LinkableDoors\obj\Release\LinkableDoors.pdb
