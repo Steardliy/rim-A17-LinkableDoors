@@ -25,5 +25,21 @@ namespace LinkableDoors.NewFolder1
 
             }
         }
+        [HarmonyPatch(typeof(Building_Door), "SpawnSetup", new Type[] { typeof(Map), typeof(bool) })]
+        static class Building_Door_SpawnSetup_Fix
+        {
+            public static void Postfix(Building_Door __instance)
+            {
+
+            }
+        }
+        [HarmonyPatch(typeof(Building_Door), "DeSpawn", new Type[0])]
+        static class Building_Door_DeSpawn_Fix
+        {
+            public static void Postfix(Building_Door __instance)
+            {
+
+            }
+        }
     }
 }
