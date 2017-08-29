@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Patch>
-	<Operation Class="PatchOperationReplace">
+	<!--<Operation Class="PatchOperationReplace">
 		<xpath>*/ThingDef[@Name="DoorBase"]/thingClass</xpath>
 		<Value>
 			<thingClass>LinkableDoors.Building_LinkableDoor</thingClass>
 		</Value>
-	</Operation>
+	</Operation>-->
 	
 	<Operation Class="PatchOperationSequence">
 	  <success>Always</success>
