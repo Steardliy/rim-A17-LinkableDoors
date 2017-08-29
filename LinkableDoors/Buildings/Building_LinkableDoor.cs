@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Verse;
+using System.Reflection;
+using System;
 
 namespace LinkableDoors
 {
@@ -15,6 +17,11 @@ namespace LinkableDoors
             public bool Any()
             {
                 return linkedDoors.Any();
+            }
+            public void Reset()
+            {
+                this.linkedDoors.Clear();
+                this.linkType = -1;
             }
             public LinkData() { }
             public LinkData(Building_LinkableDoor other, int type)
@@ -34,7 +41,10 @@ namespace LinkableDoors
 
         protected LinkData linkData;
 
-        public bool CanLinkFromOther => !this.linkData.Any();
+        public virtual bool CanLinkFromOther
+        {
+            get { return (!this.linkData.Any() && !this.ShouldSingleDoor()); }
+        }
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
@@ -48,7 +58,7 @@ namespace LinkableDoors
             {
                 current.Nortify_UnLinked(this);
             }
-            this.linkData.linkedDoors.Clear();
+            this.linkData.Reset();
         }
 
         public override void Draw()
@@ -58,7 +68,18 @@ namespace LinkableDoors
                 base.Draw();
                 return;
             }
-            
+
+            if (this.ShouldSingleDoor())
+            {
+                foreach (var current in linkData.linkedDoors)
+                {
+                    current.Nortify_UnLinked(this);
+                }
+                this.linkData.Reset();
+                base.Draw();
+                return;
+            }
+
             float num = Mathf.Clamp01((float)this.visualTicksOpen / (float)base.TicksToOpenNow);
             float d = 0f + 0.95f * num;
 
@@ -132,7 +153,7 @@ namespace LinkableDoors
                 IntVec3 pos = base.Position + GenAdj.CardinalDirections[i];
                 Building_LinkableDoor door = base.Map.thingGrid.ThingAt(pos, base.def) as Building_LinkableDoor;
                 if(door != null  && door.CanLinkFromOther)
-                {;
+                {
                     result.linkType = ((i + 2) % 4);
                     result.linkedDoors.Add(door);
                     door.Nortify_Linked(this, i);
@@ -140,6 +161,49 @@ namespace LinkableDoors
                 }
             }
             return result;
+        }
+        private bool ShouldSingleDoor()
+        {
+            IntVec3 pos = base.Position;
+            int num = this.AlignQualityAgainst(pos + IntVec3.East, base.Map);
+            num += this.AlignQualityAgainst(pos + IntVec3.West, base.Map);
+            if (num == 2)
+            {
+                return true;
+            }
+            
+            num = this.AlignQualityAgainst(pos + IntVec3.North, base.Map);
+            num += this.AlignQualityAgainst(pos + IntVec3.South, base.Map);
+            if (num == 2)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private int AlignQualityAgainst(IntVec3 c, Map map)
+        {
+            if (!c.InBounds(map))
+            {
+                return 0;
+            }
+            if (!c.Walkable(map))
+            {
+                return 1;
+            }
+            List<Thing> thingList = c.GetThingList(map);
+            for (int i = 0; i < thingList.Count; i++)
+            {
+                Thing thing = thingList[i] as Blueprint;
+                if (thing != null)
+                {
+                    if (thing.def.entityDefToBuild.passability == Traversability.Impassable)
+                    {
+                        return 1;
+                    }
+                }
+            }
+            return 0;
         }
     }
 }
