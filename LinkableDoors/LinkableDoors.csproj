@@ -54,7 +54,6 @@
   <ItemGroup>
     <Compile Include="Buildings\Building_LinkableDoor.cs" />
     <Compile Include="Misc\LD_MeshPool.cs" />
-    <Compile Include="Harmony\HarmonyPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
