@@ -11,14 +11,19 @@ namespace LinkableDoors
     {
         IEnumerable<ILinkData> Children { get; }
         ILinkGroup Concat(ILinkGroup other);
-        
+        ILinkGroup Split(ILinkData point);
+        Vector3 RecalculateCenter();
+
+        bool Any();
+        void Remove(ILinkData delObj);
+        void Add(ILinkData newObj);
     }
     public interface ILinkData
     {
         ILinkGroup GroupParent { get; set; }
         IntVec3 Pos { get; }
         Vector3 DrawPos { get; }
-        Map map { get; }
+        Map Map { get; }
 
         bool CanLinkFromOther();
 

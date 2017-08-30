@@ -10,7 +10,7 @@ namespace LinkableDoors
 {
     public class Building_LinkableDoor : Building_Door
     {
-        public override void Draw()
+        /*public override void Draw()
         {
             if (this.linkData.linkType == 0)
             {
@@ -76,7 +76,7 @@ namespace LinkableDoors
             Graphics.DrawMesh(mesh, vector2, base.Rotation.AsQuat, this.Graphic.MatAt(base.Rotation, null), 0);
 
             base.Comps_PostDraw();
-        }
+        }*/
         
         private bool ShouldSingleDoor()
         {

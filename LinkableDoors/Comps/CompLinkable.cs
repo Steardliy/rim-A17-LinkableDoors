@@ -16,24 +16,26 @@ namespace LinkableDoors
 
         public IntVec3 Pos => base.parent.Position;
         public Vector3 DrawPos => base.parent.DrawPos;
+        public Map Map => base.parent.Map;
 
         public bool CanLinkFromOther()
         {
-            this.compDef.linkableNumber;
-            return (!this.linkData.Any() && !this.ShouldSingleDoor());
+            //this.compDef.linkableNumber;
+            //return (!this.linkData.Any() && !this.ShouldSingleDoor());
+            return true;
         }
 
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             base.PostSpawnSetup(respawningAfterLoad);
             this.compDef = base.props as CompProperties_Linkable;
-            base.parent.Map.GetComponent<LinkGroupManager>()?.Notify_LinkableDoorSpawned(this);
+            LinkGroupUtility.Notify_LinkableSpawned(this);
 
         }
         public override void PostDeSpawn(Map map)
         {
             base.PostDeSpawn(map);
-            map.GetComponent<LinkGroupManager>()?.Notify_LinkableDoorDeSpawned(this);
+            LinkGroupUtility.Notify_LinkableDeSpawned(this);
         }
         public void Notify_Linked(ILinkData other, int linkType)
         {

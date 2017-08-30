@@ -7,46 +7,66 @@ using Verse;
 
 namespace LinkableDoors
 {
-    class LinkGroupManager : MapComponent
+    static class LinkGroupUtility
     {
-        public LinkGroupManager(Map map) : base(map) {}
+        private static List<ILinkGroup> linkedGroup = new List<ILinkGroup>();
 
-        private List<ILinkGroup> linkedGroup;
+        public static void Notify_LinkableSpawned(ILinkData newObj)
+        {
+            ILinkGroup newGroup = LinkGroupUtility.CheckAround(newObj);
+            if (newGroup != null)
+            {
+                LinkGroupUtility.GroupRegister(newGroup);
+            }
+        }
+        public static void Notify_LinkableDeSpawned(ILinkData delObj)
+        {
+            ILinkGroup parent = delObj.GroupParent;
+            if (parent.Children.First() == delObj || parent.Children.Last() == delObj)
+            {
+                parent.Remove(delObj);
+                if (parent.Any())
+                {
+                    parent.RecalculateCenter();
+                    return;
+                }
+                LinkGroupUtility.GroupUnRegister(parent);
+                return;
+            }
+            ILinkGroup newGroup = parent.Split(delObj);
+            LinkGroupUtility.GroupRegister(newGroup);
+        }
+        private static void GroupRegister(ILinkGroup newGropu)
+        {
+            Log.Message("Register01:" + linkedGroup.Count + " children:" + newGropu.Children.Count());
+            LinkGroupUtility.linkedGroup.Add(newGropu);
+            Log.Message("Register02:" + linkedGroup.Count + " c:"+ linkedGroup.First().Children.Count() + " children:" + newGropu.Children.Count());
+        }
+        private static void GroupUnRegister(ILinkGroup delGropu)
+        {
+            Log.Message("UnRegister01:" + linkedGroup.Count + " children:" + delGropu.Children.Count());
+            LinkGroupUtility.linkedGroup.Remove(delGropu);
+            Log.Message("UnRegister02:" + linkedGroup.Count + " children:" + delGropu.Children.Count());
+        }
 
-        public void Notify_LinkableSpawned(ILinkData newObj)
+        public static ILinkGroup CheckAround(ILinkData newObj)
         {
-            ILinkGroup newGroup = this.CheckAround(newObj);
-            this.GroupRegister(newGroup);
-        }
-        public void Notify_LinkableDeSpawned(ILinkData delObj)
-        {
-
-        }
-        private void GroupRegister(ILinkGroup newGropu)
-        {
-            this.linkedGroup.Add(newGropu);
-        }
-        private void GroupUnRegister(ILinkGroup delGropu)
-        {
-            this.linkedGroup.Remove(delGropu);
-        }
-
-        private ILinkGroup CheckAround(ILinkData current)
-        {
-            ILinkGroup result = new LinkGroup(current);
-            current.GroupParent = result;
+            ILinkGroup result = new LinkGroup(newObj);
+            newObj.GroupParent = result;
             int invert = -1;
             for (int i = 0; i < 4; i++)
             {
-                IntVec3 pos = current.Pos + GenAdj.CardinalDirections[i];
-                Building_LinkableDoor door = base.map.thingGrid.ThingAt<Building_LinkableDoor>(pos);
-                CompLinkable comp = door?.TryGetComp<CompLinkable>();
-                if (comp != null && comp.CanLinkFromOther() && (invert == -1 || invert == i))
+                IntVec3 pos = newObj.Pos + GenAdj.CardinalDirections[i];
+                Building_Door door = newObj.Map.thingGrid.ThingAt<Building_Door>(pos);
+                ILinkData current = door?.TryGetComp<CompLinkable>();
+                if (current != null && current.CanLinkFromOther() && (invert == -1 || invert == i))
                 {
                     invert = ((i + 2) % 4);
-                    result = comp.GroupParent.Concat(current.GroupParent);
-                    current.Notify_Linked(comp, (int)Math.Pow(2, invert));
-                    comp.Notify_Linked(current, (int)Math.Pow(2, i));
+                    LinkGroupUtility.GroupUnRegister(newObj.GroupParent);
+                    current.GroupParent.Concat(newObj.GroupParent);
+                    result = null;
+                    newObj.Notify_Linked(current, (int)Math.Pow(2, invert));
+                    current.Notify_Linked(newObj, (int)Math.Pow(2, i));
                 }
             }
             return result;
