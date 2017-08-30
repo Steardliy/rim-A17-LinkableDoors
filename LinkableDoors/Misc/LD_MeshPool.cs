@@ -28,7 +28,7 @@ namespace LinkableDoors
             if (!flipped)
             {
                 array2[0] = new Vector2(0f, 0f);
-                array2[1] = new Vector2(0f, 01f);
+                array2[1] = new Vector2(0f, 1f);
                 array2[2] = new Vector2(1f, 1f);
                 array2[3] = new Vector2(1f, 0f);
             }

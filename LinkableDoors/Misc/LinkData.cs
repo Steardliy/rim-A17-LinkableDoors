@@ -2,35 +2,54 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
+using Verse;
 
 namespace LinkableDoors
 {
-    public class LinkData
+    public class LinkGroup : ILinkGroup
     {
-        public List<Building_LinkableDoor> linkedDoors = new List<Building_LinkableDoor>();
-        public int linkType = -1;
+        private Vector3 center = default(Vector3);
+        private List<ILinkData> children = new List<ILinkData>();
+
+        public IEnumerable<ILinkData> Children => this.children;
+        
         public bool Any()
         {
-            return linkedDoors.Any();
+            return this.Children.Any();
         }
-        public void Reset()
+        public ILinkGroup Concat(ILinkGroup group)
         {
-            this.linkedDoors.Clear();
-            this.linkType = -1;
+            foreach(var a in group.Children)
+            {
+                this.Add(a);
+                a.GroupParent = this;
+            }
+            this.center = this.RecalculateCenter();
+            return this;
         }
-        public LinkData() { }
-        public LinkData(Building_LinkableDoor other, int type)
+        private void Add(ILinkData newData)
         {
-            this.linkedDoors.Add(other);
-            this.linkType = type;
+            this.children.Add(newData);
         }
-    }
 
-    public enum LinkDirection : int
-    {
-        Linking_Up,
-        Linking_Right,
-        Linking_Down,
-        Linking_Left
+
+        private Vector3 RecalculateCenter()
+        {
+            foreach (var a in this.Children)
+            {
+                a.Pos
+            }
+        }
+
+        public LinkGroup() { }
+        public LinkGroup(ILinkData newData)
+        {
+            this.Add(newData);
+        }
+        public LinkGroup(IEnumerable<ILinkData> newList)
+        {
+            this.children = newList.ToList();
+        }
     }
 }

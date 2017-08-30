@@ -53,8 +53,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Buildings\Building_LinkableDoor.cs" />
+    <Compile Include="Comps\CompLinkable.cs" />
+    <Compile Include="Comps\CompProperties_Linkable.cs" />
+    <Compile Include="Misc\ILinkGroup.cs" />
     <Compile Include="Misc\LD_MeshPool.cs" />
     <Compile Include="Misc\LinkData.cs" />
+    <Compile Include="Misc\LinkGroupManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

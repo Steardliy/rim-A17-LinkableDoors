@@ -10,31 +10,9 @@ namespace LinkableDoors
 {
     public class Building_LinkableDoor : Building_Door
     {
-        protected LinkData linkData;
-
-        public virtual bool CanLinkFromOther
-        {
-            get { return (!this.linkData.Any() && !this.ShouldSingleDoor()); }
-        }
-
-        public override void SpawnSetup(Map map, bool respawningAfterLoad)
-        {
-            base.SpawnSetup(map, respawningAfterLoad);
-            this.linkData = this.CheckAround();
-        }
-        public override void DeSpawn()
-        {
-            base.DeSpawn();
-            foreach (var current in linkData.linkedDoors)
-            {
-                current.Nortify_UnLinked(this);
-            }
-            this.linkData.Reset();
-        }
-
         public override void Draw()
         {
-            if (this.linkData.linkType < 0)
+            if (this.linkData.linkType == 0)
             {
                 base.Draw();
                 return;
@@ -99,40 +77,7 @@ namespace LinkableDoors
 
             base.Comps_PostDraw();
         }
-
-        public void Nortify_Linked(Building_LinkableDoor other, int type)
-        {
-            if (!this.linkData.Any())
-            {
-                this.linkData.linkedDoors.Add(other);
-                this.linkData.linkType = type;
-            }
-        }
-        public void Nortify_UnLinked(Building_LinkableDoor other)
-        {
-            if (this.linkData.Any())
-            {
-                this.linkData = CheckAround();
-            }
-        }
-
-        private LinkData CheckAround()
-        {
-            LinkData result = new LinkData();
-            for(int i = 0; i < 4; i++)
-            {
-                IntVec3 pos = base.Position + GenAdj.CardinalDirections[i];
-                Building_LinkableDoor door = base.Map.thingGrid.ThingAt(pos, base.def) as Building_LinkableDoor;
-                if(door != null  && door.CanLinkFromOther)
-                {
-                    result.linkType = ((i + 2) % 4);
-                    result.linkedDoors.Add(door);
-                    door.Nortify_Linked(this, i);
-                    break;
-                }
-            }
-            return result;
-        }
+        
         private bool ShouldSingleDoor()
         {
             IntVec3 pos = base.Position;
