@@ -10,7 +10,7 @@ namespace LinkableDoors
 {
     public class Building_LinkableDoor : Building_Door
     {
-        /*public override void Draw()
+        public override void Draw()
         {
             if (this.linkData.linkType == 0)
             {
@@ -76,50 +76,6 @@ namespace LinkableDoors
             Graphics.DrawMesh(mesh, vector2, base.Rotation.AsQuat, this.Graphic.MatAt(base.Rotation, null), 0);
 
             base.Comps_PostDraw();
-        }*/
-        
-        private bool ShouldSingleDoor()
-        {
-            IntVec3 pos = base.Position;
-            int num = this.AlignQualityAgainst(pos + IntVec3.East, base.Map);
-            num += this.AlignQualityAgainst(pos + IntVec3.West, base.Map);
-            if (num == 2)
-            {
-                return true;
-            }
-            
-            num = this.AlignQualityAgainst(pos + IntVec3.North, base.Map);
-            num += this.AlignQualityAgainst(pos + IntVec3.South, base.Map);
-            if (num == 2)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        private int AlignQualityAgainst(IntVec3 c, Map map)
-        {
-            if (!c.InBounds(map))
-            {
-                return 0;
-            }
-            if (!c.Walkable(map))
-            {
-                return 1;
-            }
-            List<Thing> thingList = c.GetThingList(map);
-            for (int i = 0; i < thingList.Count; i++)
-            {
-                Thing thing = thingList[i] as Blueprint;
-                if (thing != null)
-                {
-                    if (thing.def.entityDefToBuild.passability == Traversability.Impassable)
-                    {
-                        return 1;
-                    }
-                }
-            }
-            return 0;
         }
     }
 }

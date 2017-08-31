@@ -25,9 +25,9 @@ namespace LinkableDoors
         Vector3 DrawPos { get; }
         Map Map { get; }
 
-        bool CanLinkFromOther();
+        bool CanLinkFromOther(int i);
 
-        void Notify_Linked(ILinkData other, int linkType);
-        void Notify_UnLinked(ILinkData other, int linkType);
+        void Notify_Linked(ILinkData other, int linkedFrom);
+        void Notify_UnLinked(ILinkData other, int unlinkedFrom);
     }
 }

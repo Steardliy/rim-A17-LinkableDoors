@@ -58,7 +58,7 @@
     <Compile Include="Misc\ILinkInterface.cs" />
     <Compile Include="Misc\LD_MeshPool.cs" />
     <Compile Include="Misc\LinkGroup.cs" />
-    <Compile Include="Misc\LinkGroupManager.cs" />
+    <Compile Include="Misc\LinkGroupUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
