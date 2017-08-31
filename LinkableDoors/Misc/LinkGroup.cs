@@ -18,23 +18,22 @@ namespace LinkableDoors
         {
             return this.children.Any();
         }
-        public ILinkGroup Split(ILinkData point)
+        public void Split(ILinkData point)
         {
             int index = this.children.IndexOf(point);
             Log.Message("index:" + index + " point:"+ point.DrawPos.ToString() + " thisc:" + this.Children.Count());
             ILinkGroup newGroup = new LinkGroup(this.children.Skip(index + 1));
+            newGroup.RecalculateCenter();
             this.children.RemoveRange(index, this.children.Count - index);
-            this.center = this.RecalculateCenter();
-            return newGroup;
+            this.RecalculateCenter();
         }
-        public ILinkGroup Concat(ILinkGroup other)
+        public void Concat(ILinkGroup other)
         {
             foreach(var a in other.Children)
             {
                 this.Add(a);
             }
-            this.center = this.RecalculateCenter();
-            return this;
+            this.RecalculateCenter();
         }
         public void Remove(ILinkData delData)
         {
@@ -46,8 +45,9 @@ namespace LinkableDoors
             this.children.Add(newData);
             newData.GroupParent = this;
         }
-        public Vector3 RecalculateCenter()
+        public void RecalculateCenter()
         {
+            if (!this.Any()) { return; }
             this.children.Sort((x,y) => {
                 int result = (int)(x.Pos.x - y.Pos.x);
                 return result != 0 ? result : (int)(x.Pos.z - y.Pos.z);
@@ -55,7 +55,7 @@ namespace LinkableDoors
             Vector3 min = this.children.First().DrawPos;
             Vector3 max = this.children.Last().DrawPos;
             Log.Message("min:" + min + " max:" + max);
-            return (min + max) / 2;
+            this.center =  (min + max) / 2;
         }
 
         public LinkGroup() { }
@@ -71,7 +71,6 @@ namespace LinkableDoors
             {
                 a.GroupParent = this;
             }
-            this.center = this.RecalculateCenter();
         }
     }
 }

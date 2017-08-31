@@ -10,9 +10,9 @@ namespace LinkableDoors
     public interface ILinkGroup
     {
         IEnumerable<ILinkData> Children { get; }
-        ILinkGroup Concat(ILinkGroup other);
-        ILinkGroup Split(ILinkData point);
-        Vector3 RecalculateCenter();
+        void Concat(ILinkGroup other);
+        void Split(ILinkData point);
+        void RecalculateCenter();
 
         bool Any();
         void Remove(ILinkData delObj);
@@ -24,8 +24,10 @@ namespace LinkableDoors
         IntVec3 Pos { get; }
         Vector3 DrawPos { get; }
         Map Map { get; }
+        int LinkingFrom { get; }
 
         bool CanLinkFromOther(int i);
+        void Reset();
 
         void Notify_Linked(ILinkData other, int linkedFrom);
         void Notify_UnLinked(ILinkData other, int unlinkedFrom);

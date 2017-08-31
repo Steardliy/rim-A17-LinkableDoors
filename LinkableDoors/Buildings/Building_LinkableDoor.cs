@@ -10,21 +10,27 @@ namespace LinkableDoors
 {
     public class Building_LinkableDoor : Building_Door
     {
+        private ILinkData linkable;
+        public override void SpawnSetup(Map map, bool respawningAfterLoad)
+        {
+            base.SpawnSetup(map, respawningAfterLoad);
+            this.linkable = base.GetComp<CompLinkable>();
+            if(this.linkable == null)
+            {
+                Log.Error("[LinkableDoors] This class does not have a component of Linkable.");
+            }
+        }
         public override void Draw()
         {
-            if (this.linkData.linkType == 0)
+            if (this.linkable.LinkingFrom == 0)
             {
                 base.Draw();
                 return;
             }
 
-            if (this.ShouldSingleDoor())
+            if (LinkGroupUtility.ShouldSingleDoor(base.Position, base.Map))
             {
-                foreach (var current in linkData.linkedDoors)
-                {
-                    current.Nortify_UnLinked(this);
-                }
-                this.linkData.Reset();
+                LinkGroupUtility.DetachGroupAround(this.linkable);
                 base.Draw();
                 return;
             }

@@ -55,7 +55,7 @@
     <Compile Include="Buildings\Building_LinkableDoor.cs" />
     <Compile Include="Comps\CompLinkable.cs" />
     <Compile Include="Comps\CompProperties_Linkable.cs" />
-    <Compile Include="Misc\ILinkInterface.cs" />
+    <Compile Include="Misc\Common.cs" />
     <Compile Include="Misc\LD_MeshPool.cs" />
     <Compile Include="Misc\LinkGroup.cs" />
     <Compile Include="Misc\LinkGroupUtility.cs" />

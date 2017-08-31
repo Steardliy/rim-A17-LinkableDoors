@@ -14,20 +14,31 @@ namespace LinkableDoors
         public IntVec3 Pos => base.parent.Position;
         public Vector3 DrawPos => base.parent.DrawPos;
         public Map Map => base.parent.Map;
+        public int LinkingFrom => this.linkDirectionsFrom;
 
-        private int linkingFrom = 0;
-        private int linkingNum = 0;
-        private CompProperties_Linkable compDef;
+        private int linkDirectionsFrom = 0;
+        private Dictionary<ILinkData, int> directLinking = new Dictionary<ILinkData, int>();
+        private CompProperties_Linkable compDef => (CompProperties_Linkable)base.props;
 
         public virtual bool CanLinkFromOther(int i)
         {
-            return this.linkableDimension(i) && this.linkingNum <= this.compDef.linkableLimit && !LinkGroupUtility.ShouldSingleDoor(this.Pos, this.Map);
+            return this.linkableDirections(i) && this.GroupParent.Children.Count() <= this.compDef.linkableLimit && !LinkGroupUtility.ShouldSingleDoor(this.Pos, this.Map);
+        }
+
+        public void Reset()
+        {
+            foreach (var a in this.directLinking)
+            {
+                a.Key.Notify_UnLinked(this, a.Value);
+            }
+            this.GroupParent = null;
+            this.linkDirectionsFrom = 0;
+            this.directLinking.Clear();
         }
 
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             base.PostSpawnSetup(respawningAfterLoad);
-            this.compDef = base.props as CompProperties_Linkable;
             LinkGroupUtility.Notify_LinkableSpawned(this);
 
         }
@@ -38,22 +49,22 @@ namespace LinkableDoors
         }
         public virtual void Notify_Linked(ILinkData other, int type)
         {
-            this.linkingFrom += type;
-            this.linkingNum++;
+            this.linkDirectionsFrom += (int)Math.Pow(2, type);
+            this.directLinking.Add(other, type);
         }
 
         public virtual void Notify_UnLinked(ILinkData other, int type)
         {
-            this.linkingFrom -= type;
-            this.linkingNum--;
+            this.linkDirectionsFrom -= (int)Math.Pow(2, type);
+            this.directLinking.Remove(other);
         }
-        private bool linkableDimension(int i)
+        private bool linkableDirections(int i)
         {
-            if(this.linkingFrom == 0)
+            if(this.linkDirectionsFrom == 0)
             {
                 return true;
             }
-            return this.linkingFrom == (int)Math.Pow(2, i);
+            return this.linkDirectionsFrom == (int)Math.Pow(2, i);
         }
     }
 }
