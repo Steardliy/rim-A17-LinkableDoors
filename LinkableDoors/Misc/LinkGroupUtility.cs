@@ -50,10 +50,10 @@ namespace LinkableDoors
                     ILinkData current = thing?.TryGetComp<CompLinkable>();
                     if (current != null && current.CanLinkFromOther(i))
                     {
-                        int invert = ((i + 2) % 4);
+                        int invert = (i + 2) % 4;
                         current.GroupParent.Concat(newObj.GroupParent);
-                        newObj.Notify_Linked(current, invert);
-                        current.Notify_Linked(newObj, i);
+                        newObj.Notify_Linked(current, i);
+                        current.Notify_Linked(newObj, invert);
                     }
                 }
             }

@@ -12,6 +12,7 @@ namespace LinkableDoors
         private Vector3 center = default(Vector3);
         private List<ILinkData> children = new List<ILinkData>();
 
+        public Vector3 Center => this.center;
         public IEnumerable<ILinkData> Children => this.children;
         
         public bool Any()
@@ -47,6 +48,7 @@ namespace LinkableDoors
         }
         public void RecalculateCenter()
         {
+            Log.Message("childrenCount:" + this.Children.Count());
             if (!this.Any()) { return; }
             this.children.Sort((x,y) => {
                 int result = (int)(x.Pos.x - y.Pos.x);
