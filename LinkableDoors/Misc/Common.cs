@@ -10,7 +10,6 @@ namespace LinkableDoors
     public interface ILinkGroup
     {
         IEnumerable<ILinkData> Children { get; }
-        Vector3 Center { get; }
 
         void Concat(ILinkGroup other);
         void Split(ILinkData point);
@@ -23,6 +22,7 @@ namespace LinkableDoors
     public interface ILinkData
     {
         ILinkGroup GroupParent { get; set; }
+        PositionFlag PosFlag { get; set; }
         IntVec3 Pos { get; }
         Vector3 DrawPos { get; }
         Map Map { get; }
@@ -34,5 +34,15 @@ namespace LinkableDoors
 
         void Notify_Linked(ILinkData other, int direction);
         void Notify_UnLinked(ILinkData other, int direction);
+    }
+
+    public enum PositionFlag : byte
+    {
+        None,
+        RightSide,
+        RightBorder,
+        LeftSide,
+        LeftBorder,
+        Center
     }
 }

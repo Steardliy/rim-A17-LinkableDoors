@@ -48,7 +48,7 @@ namespace LinkableDoors
                 foreach (var thing in newObj.Map.thingGrid.ThingsListAtFast(pos))
                 {
                     ILinkData current = thing?.TryGetComp<CompLinkable>();
-                    if (current != null && current.CanLinkFromOther(i))
+                    if (current != null && current.CanLinkFromOther(i) && newObj.CanLinkFromOther(i))
                     {
                         int invert = (i + 2) % 4;
                         current.GroupParent.Concat(newObj.GroupParent);

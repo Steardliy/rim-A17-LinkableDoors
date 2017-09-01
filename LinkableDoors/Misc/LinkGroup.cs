@@ -9,10 +9,8 @@ namespace LinkableDoors
 {
     public class LinkGroup : ILinkGroup
     {
-        private Vector3 center = default(Vector3);
         private List<ILinkData> children = new List<ILinkData>();
-
-        public Vector3 Center => this.center;
+        
         public IEnumerable<ILinkData> Children => this.children;
         
         public bool Any()
@@ -50,21 +48,39 @@ namespace LinkableDoors
         {
             Log.Message("childrenCount:" + this.Children.Count());
             if (!this.Any()) { return; }
+           
             this.children.Sort((x,y) => {
                 int result = (int)(x.Pos.x - y.Pos.x);
                 return result != 0 ? result : (int)(x.Pos.z - y.Pos.z);
                 });
-            Vector3 min = this.children.First().DrawPos;
-            Vector3 max = this.children.Last().DrawPos;
-            Log.Message("min:" + min + " max:" + max);
-            this.center =  (min + max) / 2;
+
+            int count = this.children.Count();
+            int center = count / 2;
+
+            for(int i = 0; i < center; i++)
+            {
+                this.children[i].PosFlag = PositionFlag.LeftSide;
+            }
+            for (int i = center + 1; i < count; i++)
+            {
+                this.children[i].PosFlag = PositionFlag.RightSide;
+            }
+            if ((count % 2) == 0)
+            {
+                this.children[center - 1].PosFlag = PositionFlag.LeftBorder;
+                this.children[center].PosFlag = PositionFlag.RightBorder;
+            }
+            else
+            {
+                this.children[center].PosFlag = PositionFlag.Center;
+            }
         }
 
         public LinkGroup() { }
         public LinkGroup(ILinkData newData)
         {
             this.Add(newData);
-            this.center = newData.DrawPos;
+            newData.PosFlag = PositionFlag.Center;
         }
         public LinkGroup(IEnumerable<ILinkData> newList)
         {

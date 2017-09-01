@@ -11,11 +11,14 @@ namespace LinkableDoors
     class CompLinkable : ThingComp, ILinkData
     {
         public ILinkGroup GroupParent { get; set; }
+        public PositionFlag PosFlag { get; set; }
+
         public IntVec3 Pos => base.parent.Position;
         public Vector3 DrawPos => base.parent.DrawPos;
         public Map Map => base.parent.Map;
         public int LinkingFrom => this.linkDirectionsFrom;
         public int DirectLinkCount => this.directLinking.Count();
+        
 
         private int linkDirectionsFrom = 0;
         private Dictionary<ILinkData, int> directLinking = new Dictionary<ILinkData, int>();

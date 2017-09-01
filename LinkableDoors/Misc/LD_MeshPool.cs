@@ -6,23 +6,25 @@ namespace LinkableDoors
     [StaticConstructorOnStartup]
     public static class LD_MeshPool
     {
-        public static readonly Mesh Plane10Wide;
-        public static readonly Mesh Plane10FlipWide;
-        public static readonly Mesh Plane10Fill;
+        public static readonly Mesh plane10Wide;
+        public static readonly Mesh plane10FlipWide;
+        public static readonly Mesh plane10Fill;
+        public static readonly Mesh plane10FillHalf;
 
         static LD_MeshPool()
         {
-            LD_MeshPool.Plane10Wide = LD_MeshPool.NewPlaneMesh(new Vector2(2f, 1f), false);
-            LD_MeshPool.Plane10FlipWide = LD_MeshPool.NewPlaneMesh(new Vector2(2f, 1f), true);
+            LD_MeshPool.plane10Wide = LD_MeshPool.NewPlaneMesh(new Vector2(2f, 1f), false);
+            LD_MeshPool.plane10FlipWide = LD_MeshPool.NewPlaneMesh(new Vector2(2f, 1f), true);
 
             Vector2[] uvs = new Vector2[4]
             {
-                new Vector2(0.2f, 0f),
+                new Vector2(0.1f, 0f),
+                new Vector2(0.1f, 1f),
                 new Vector2(0.2f, 1f),
-                new Vector2(0.3f, 1f),
-                new Vector2(0.3f, 0f)
+                new Vector2(0.2f, 0f)
             };
-            LD_MeshPool.Plane10Fill = LD_MeshPool.NewPlaneMesh(new Vector2(1f, 1f), false, uvs);
+            LD_MeshPool.plane10FillHalf = LD_MeshPool.NewPlaneMesh(new Vector2(0.5f, 1f), false, uvs);
+            LD_MeshPool.plane10Fill = LD_MeshPool.NewPlaneMesh(new Vector2(1.1f, 1f), false, uvs);
         }
 
         static Mesh NewPlaneMesh(Vector2 size, bool flipped, Vector2[] uvs = null)

@@ -35,31 +35,52 @@ namespace LinkableDoors
                 return;
             }
 
+            base.Rotation = ((this.linkable.LinkingFrom & 0x01) | (this.linkable.LinkingFrom >> 2 & 0x01)) == 0x01 ? Rot4.East : Rot4.North;
             float num = Mathf.Clamp01((float)this.visualTicksOpen / (float)base.TicksToOpenNow);
             float d = 0f + 0.95f * num;
-            Vector3 vector = default(Vector3);
-            Vector3 offset = default(Vector3);
-            Mesh mesh;
-
-            if (this.linkable.DirectLinkCount >= 2)
+            Vector3[] offset = { default(Vector3), default(Vector3) };
+            Vector3[] vector = { default(Vector3), default(Vector3) };
+            Mesh[] mesh = new Mesh[2] { null, null };
+            
+            switch (this.linkable.PosFlag)
             {
-                /*if (base.DrawPos.sqrMagnitude < this.linkable.GroupParent.Center.sqrMagnitude)
-                {
-
-                }
-                else if (base.DrawPos.sqrMagnitude > this.linkable.GroupParent.Center.sqrMagnitude)
-                {
-
-                }
-                else
-                {
-
-                }*/
-                mesh = LD_MeshPool.Plane10Fill;
-                vector = new Vector3(0f, 0f, 1f);
-                base.Rotation = (this.linkable.LinkingFrom & 0x01) == 0x01 ? Rot4.East : Rot4.North;
+                case PositionFlag.LeftSide:
+                    vector[0] = new Vector3(0f, 0f, -1f);
+                    mesh[0] = LD_MeshPool.plane10Fill;
+                    break;
+                case PositionFlag.RightSide:
+                    vector[0] = new Vector3(0f, 0f, 1f);
+                    mesh[0] = LD_MeshPool.plane10Fill;
+                    break;
+                case PositionFlag.LeftBorder:
+                    vector[0] = new Vector3(0f, 0f, -1f);
+                    vector[1] = new Vector3(0f, 0f, -1f);
+                    mesh[0] = LD_MeshPool.plane10Fill;
+                    offset[0] = new Vector3(0f, 0f, 0.5f);
+                    mesh[0] = MeshPool.plane10;
+                    break;
+                case PositionFlag.RightBorder:
+                    vector[0] = new Vector3(0f, 0f, 1f);
+                    vector[1] = new Vector3(0f, 0f, 1f);
+                    mesh[0] = LD_MeshPool.plane10Fill;
+                    offset[0] = new Vector3(0f, 0f, -0.5f);
+                    mesh[0] = MeshPool.plane10Flip;
+                    break;
+                case PositionFlag.Center:
+                    vector[0] = new Vector3(0f, 0f, -1f);
+                    vector[1] = new Vector3(0f, 0f, 1f);
+                    mesh[0] = MeshPool.plane10;
+                    mesh[1] = MeshPool.plane10Flip;
+                    break;
+                default:
+                    Log.Error("default");
+                    vector[0] = new Vector3(0f, 0f, 1f);
+                    mesh[0] = LD_MeshPool.plane10FlipWide;
+                    break;
             }
-            else
+
+            // }
+            /*else
             {
                 switch (this.linkable.LinkingFrom)
                 {
@@ -67,25 +88,21 @@ namespace LinkableDoors
                         vector = new Vector3(0f, 0f, -1f);
                         offset = new Vector3(0f, 0f, -0.5f);
                         mesh = LD_MeshPool.Plane10Wide;
-                        base.Rotation = Rot4.East;
                         break;
                     case (int)LinkDirections.Right:
                         vector = new Vector3(0f, 0f, 1f);
                         offset = new Vector3(-0.5f, 0f, 0f);
                         mesh = LD_MeshPool.Plane10FlipWide;
-                        base.Rotation = Rot4.North;
                         break;
                     case (int)LinkDirections.Down:
                         vector = new Vector3(0f, 0f, 1f);
                         offset = new Vector3(0f, 0f, 0.5f);
                         mesh = LD_MeshPool.Plane10FlipWide;
-                        base.Rotation = Rot4.East;
                         break;
                     case (int)LinkDirections.Left:
                         vector = new Vector3(0f, 0f, -1f);
                         offset = new Vector3(0.5f, 0f, 0f);
                         mesh = LD_MeshPool.Plane10Wide;
-                        base.Rotation = Rot4.North;
                         break;
                     default:
                         Log.Warning("LinkableDoor:default.");
@@ -93,16 +110,24 @@ namespace LinkableDoors
                         mesh = LD_MeshPool.Plane10Wide;
                         break;
                 }
-            }
-            
+            }*/
+
             Rot4 rotation = base.Rotation;
             rotation.Rotate(RotationDirection.Clockwise);
-            vector = rotation.AsQuat * vector;
-            Vector3 vector2 = this.DrawPos;
-            vector2.y = Altitudes.AltitudeFor(AltitudeLayer.DoorMoveable);
-            vector2 += offset + vector * d;
-            Graphics.DrawMesh(mesh, vector2, base.Rotation.AsQuat, this.Graphic.MatAt(base.Rotation, null), 0);
 
+            for (int i = 0; i < 2; i++)
+            {
+                if(mesh[i] == null)
+                {
+                    break;
+                }
+                vector[i] = rotation.AsQuat * vector[i];
+                offset[i] = rotation.AsQuat * offset[i];
+                Vector3 vector2 = this.DrawPos;
+                vector2.y = Altitudes.AltitudeFor(AltitudeLayer.DoorMoveable);
+                vector2 += offset[i] + vector[i] * d;
+                Graphics.DrawMesh(mesh[i], vector2, base.Rotation.AsQuat, this.Graphic.MatAt(base.Rotation, null), 0);
+            }
             base.Comps_PostDraw();
         }
     }
