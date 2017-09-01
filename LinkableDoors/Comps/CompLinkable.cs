@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RimWorld;
 using UnityEngine;
 using Verse;
 
@@ -26,15 +24,14 @@ namespace LinkableDoors
 
         public virtual bool CanLinkFromOther(int direction)
         {
-            return this.linkableDirections(direction) && this.GroupParent.Children.Count() <= this.compDef.linkableLimit && !LinkGroupUtility.ShouldSingleDoor(this.Pos, this.Map);
+            return this.linkableDirections(direction) && this.GroupParent.Children.Count() < this.compDef.linkableLimit && !LinkGroupUtility.ShouldSingleDoor(this.Pos, this.Map);
         }
 
         public void Reset()
         {
             foreach (var a in this.directLinking)
             {
-                int invert = (a.Value + 2) % 4;
-                a.Key.Notify_UnLinked(this, invert);
+                a.Key.Notify_UnLinked(this, LinkGroupUtility.Invert(a.Value));
             }
             this.GroupParent = null;
             this.linkDirectionsFrom = 0;
@@ -65,7 +62,6 @@ namespace LinkableDoors
         }
         private bool linkableDirections(int direction)
         {
-            Log.Message("direc:" + direction + " linkDirectionsFrom:" + linkDirectionsFrom);
             if(this.linkDirectionsFrom == 0)
             {
                 return true;

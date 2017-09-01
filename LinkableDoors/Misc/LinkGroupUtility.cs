@@ -1,8 +1,6 @@
-﻿using System;
+﻿using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RimWorld;
 using Verse;
 
 namespace LinkableDoors
@@ -17,6 +15,8 @@ namespace LinkableDoors
         {
             LinkGroupUtility.DetachGroupAround(delObj);
         }
+
+        public static int Invert(int i) { return (i + 2) % 4; }
 
         public static void DetachGroupAround(ILinkData delObj)
         {
@@ -48,12 +48,15 @@ namespace LinkableDoors
                 foreach (var thing in newObj.Map.thingGrid.ThingsListAtFast(pos))
                 {
                     ILinkData current = thing?.TryGetComp<CompLinkable>();
-                    if (current != null && current.CanLinkFromOther(i) && newObj.CanLinkFromOther(i))
+                    if(current != null)
                     {
-                        int invert = (i + 2) % 4;
-                        current.GroupParent.Concat(newObj.GroupParent);
-                        newObj.Notify_Linked(current, i);
-                        current.Notify_Linked(newObj, invert);
+                        int invert = LinkGroupUtility.Invert(i);
+                        if (current.CanLinkFromOther(i) && newObj.CanLinkFromOther(invert))
+                        {
+                            current.GroupParent.Concat(newObj.GroupParent);
+                            newObj.Notify_Linked(current, i);
+                            current.Notify_Linked(newObj, invert);
+                        }
                     }
                 }
             }

@@ -4,7 +4,7 @@
 		<xpath>*/ThingDef[@Name="DoorBase"]/comps</xpath>
 		<Value>
 			<li Class="LinkableDoors.CompProperties_Linkable">
-				<linkableLimit>100</linkableLimit>
+				<linkableLimit>2</linkableLimit>
 			</li>
 		</Value>
 	</Operation>
@@ -16,7 +16,7 @@
 		</Value>
 	</Operation>
 	
-	<!--<Operation Class="PatchOperationSequence">
+	<Operation Class="PatchOperationSequence">
 	  <success>Always</success>
 	  <operations>
 	    <li Class="PatchOperationTest">
@@ -28,7 +28,15 @@
 				<thingClass>LinkableDoors.Building_LinkableDoor</thingClass>
 			</Value>
 		</li>
+		<li Class="PatchOperationAdd">
+			<xpath>*/ThingDef[thingClass = "LinkableDoors.Building_LinkableDoor"]/comps</xpath>
+			<Value>
+				<li Class="LinkableDoors.CompProperties_Linkable">
+				<linkableLimit>2</linkableLimit>
+			</li>
+			</Value>
+		</li>
 	  </operations>
-	</Operation>-->
+	</Operation>
 	
 </Patch>

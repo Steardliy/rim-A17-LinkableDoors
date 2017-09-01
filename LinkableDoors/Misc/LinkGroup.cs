@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using UnityEngine;
 using Verse;
 
 namespace LinkableDoors
@@ -20,7 +17,6 @@ namespace LinkableDoors
         public void Split(ILinkData point)
         {
             int index = this.children.IndexOf(point);
-            Log.Message("index:" + index + " point:"+ point.DrawPos.ToString() + " thisc:" + this.Children.Count());
             ILinkGroup newGroup = new LinkGroup(this.children.Skip(index + 1));
             newGroup.RecalculateCenter();
             this.children.RemoveRange(index, this.children.Count - index);
@@ -46,7 +42,6 @@ namespace LinkableDoors
         }
         public void RecalculateCenter()
         {
-            Log.Message("childrenCount:" + this.Children.Count());
             if (!this.Any()) { return; }
            
             this.children.Sort((x,y) => {
