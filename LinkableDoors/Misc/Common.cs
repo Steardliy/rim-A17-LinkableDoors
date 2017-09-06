@@ -7,6 +7,9 @@ namespace LinkableDoors
     public interface ILinkGroup
     {
         IEnumerable<ILinkData> Children { get; }
+        IEnumerable<ILinkData> GetTagGroup(PositionTag tag);
+        float GetCommonFieldSum(PositionTag tag);
+        void SetCommonField(PositionTag tag, float value);
 
         void Concat(ILinkGroup other);
         void Split(ILinkData point);
@@ -16,30 +19,35 @@ namespace LinkableDoors
         void Remove(ILinkData delData);
         void Add(ILinkData newData);
     }
+    public delegate void LinkCallBack(int param);
     public interface ILinkData
     {
+        LinkCallBack CallBack { get; set; }
+
         ILinkGroup GroupParent { get; set; }
-        PositionFlag PosFlag { get; set; }
+        PositionTag PosTag { get; set; }
+        float commonField { get; set; }
+        int DistFromCenter { get; set; }
         IntVec3 Pos { get; }
         Vector3 DrawPos { get; }
         Map Map { get; }
-        int LinkingFrom { get; }
-        int DirectLinkCount { get; }
+        bool IsSingle { get; }
+        Rot4 LineDirection { get; }
 
         bool CanLinkFromOther(int direction);
         void Reset();
 
         void Notify_Linked(ILinkData other, int direction);
-        void Notify_UnLinked(ILinkData other, int direction);
+        void Notify_UnLinked(ILinkData other);
     }
 
-    public enum PositionFlag : byte
+    public enum PositionTag : int
     {
         None,
-        RightSide,
-        RightBorder,
-        LeftSide,
-        LeftBorder,
-        Center
+        RightSide = 1,
+        LeftSide = 2,
+        RightBorder = 4,
+        LeftBorder = 8,
+        Center = RightSide | LeftSide
     }
 }

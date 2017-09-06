@@ -9,33 +9,38 @@ namespace LinkableDoors
     class CompLinkable : ThingComp, ILinkData
     {
         public ILinkGroup GroupParent { get; set; }
-        public PositionFlag PosFlag { get; set; }
+        public PositionTag PosTag { get; set; }
+        public int DistFromCenter { get; set; }
+        public float commonField { get; set; }
 
         public IntVec3 Pos => base.parent.Position;
         public Vector3 DrawPos => base.parent.DrawPos;
         public Map Map => base.parent.Map;
-        public int LinkingFrom => this.linkDirectionsFrom;
-        public int DirectLinkCount => this.directLinking.Count();
-        
-
-        private int linkDirectionsFrom = 0;
-        private Dictionary<ILinkData, int> directLinking = new Dictionary<ILinkData, int>();
-        private CompProperties_Linkable compDef => (CompProperties_Linkable)base.props;
-
-        public virtual bool CanLinkFromOther(int direction)
+        public bool IsSingle => this.directLinks.Count() == 0;
+        public Rot4 LineDirection
         {
-            return this.linkableDirections(direction) && this.GroupParent.Children.Count() < this.compDef.linkableLimit && !LinkGroupUtility.ShouldSingleDoor(this.Pos, this.Map);
+            get
+            {
+                int val = this.directLinks.FirstOrDefault().Value;
+                return (val == 0 || val == 2) ? Rot4.East : Rot4.North;
+            }
         }
 
+        public LinkCallBack CallBack { get; set; }
+        private Dictionary<ILinkData, int> directLinks = new Dictionary<ILinkData, int>();
+        private CompProperties_Linkable compDef => (CompProperties_Linkable)base.props;
+        
+        public virtual bool CanLinkFromOther(int direction)
+        {
+            return this.linkableDirections(direction) && this.GroupParent.Children.Count() < this.compDef.linkableLimit && !LinkGroupUtility.ShouldSingle(this.Pos, this.Map);
+        }
         public void Reset()
         {
-            foreach (var a in this.directLinking)
+            foreach (var a in this.directLinks)
             {
-                a.Key.Notify_UnLinked(this, LinkGroupUtility.Invert(a.Value));
-            }
-            this.GroupParent = null;
-            this.linkDirectionsFrom = 0;
-            this.directLinking.Clear();
+                a.Key.Notify_UnLinked(this);
+            };
+            this.directLinks.Clear();
         }
 
         public override void PostSpawnSetup(bool respawningAfterLoad)
@@ -51,22 +56,20 @@ namespace LinkableDoors
         }
         public virtual void Notify_Linked(ILinkData other, int direction)
         {
-            this.linkDirectionsFrom += (int)Math.Pow(2, direction);
-            this.directLinking.Add(other, direction);
+            this.directLinks.Add(other, direction);
         }
 
-        public virtual void Notify_UnLinked(ILinkData other, int direction)
+        public virtual void Notify_UnLinked(ILinkData other)
         {
-            this.linkDirectionsFrom -= (int)Math.Pow(2, direction);
-            this.directLinking.Remove(other);
+            this.directLinks.Remove(other);
         }
         private bool linkableDirections(int direction)
         {
-            if(this.linkDirectionsFrom == 0)
+            if (!this.directLinks.Any())
             {
                 return true;
             }
-            return this.linkDirectionsFrom == (int)Math.Pow(2, direction);
+            return this.directLinks.ContainsValue(direction);
         }
     }
 }

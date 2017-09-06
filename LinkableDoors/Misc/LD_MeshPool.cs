@@ -20,8 +20,8 @@ namespace LinkableDoors
             {
                 new Vector2(0.04f, 0f),
                 new Vector2(0.04f, 1f),
-                new Vector2(0.065f, 1f),
-                new Vector2(0.065f, 0f)
+                new Vector2(0.06f, 1f),
+                new Vector2(0.06f, 0f)
             };
             LD_MeshPool.plane10FillHalf = LD_MeshPool.NewPlaneMesh(new Vector2(0.57f, 1f), false, uvs);
             LD_MeshPool.plane10Fill = LD_MeshPool.NewPlaneMesh(new Vector2(1.2f, 1f), false, uvs);
