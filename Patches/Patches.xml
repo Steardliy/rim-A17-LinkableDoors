@@ -4,7 +4,7 @@
 		<xpath>*/ThingDef[@Name="DoorBase"]/comps</xpath>
 		<Value>
 			<li Class="LinkableDoors.CompProperties_Linkable">
-				<linkableLimit>2</linkableLimit>
+				<linkableLimit>9999</linkableLimit>
 			</li>
 		</Value>
 	</Operation>
@@ -32,7 +32,7 @@
 			<xpath>*/ThingDef[thingClass = "LinkableDoors.Building_LinkableDoor"]/comps</xpath>
 			<Value>
 				<li Class="LinkableDoors.CompProperties_Linkable">
-				<linkableLimit>2</linkableLimit>
+				<linkableLimit>9999</linkableLimit>
 			</li>
 			</Value>
 		</li>
