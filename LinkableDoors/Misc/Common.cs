@@ -27,6 +27,7 @@ namespace LinkableDoors
         ILinkGroup GroupParent { get; set; }
         PositionTag PosTag { get; set; }
         float commonField { get; set; }
+        bool synchronize { get; set; }
         int DistFromCenter { get; set; }
         IntVec3 Pos { get; }
         Vector3 DrawPos { get; }

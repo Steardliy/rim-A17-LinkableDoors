@@ -12,6 +12,7 @@ namespace LinkableDoors
         public PositionTag PosTag { get; set; }
         public int DistFromCenter { get; set; }
         public float commonField { get; set; }
+        public bool synchronize { get; set; }
 
         public IntVec3 Pos => base.parent.Position;
         public Vector3 DrawPos => base.parent.DrawPos;

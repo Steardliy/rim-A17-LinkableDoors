@@ -29,11 +29,13 @@ namespace LinkableDoors
                     if (a.DistFromCenter < this.linkable.DistFromCenter)
                     {
                         a.CallBack(base.ticksUntilClose);
+                        a.synchronize = true;
                     }
                 }
-                if (this.ticksUntilClose <= 0)
+                if (this.linkable.synchronize && base.ticksUntilClose <= 0)
                 {
-                    this.DoorTryClose();
+                    base.DoorTryClose();
+                    this.linkable.synchronize = false;
                 }
             }
         }
