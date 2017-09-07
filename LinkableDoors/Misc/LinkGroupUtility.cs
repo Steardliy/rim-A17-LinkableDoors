@@ -79,7 +79,8 @@ namespace LinkableDoors
                 IntVec3 pos = newObj.Pos + GenAdj.CardinalDirections[i];
                 foreach (var thing in newObj.Map.thingGrid.ThingsListAtFast(pos))
                 {
-                    ILinkData current = thing?.TryGetComp<CompLinkable>();
+                    Building_LinkableDoor door = thing as Building_LinkableDoor;
+                    ILinkData current = door?.TryGetComp<CompLinkable>();
                     if (current != null)
                     {
                         func(i, current);
