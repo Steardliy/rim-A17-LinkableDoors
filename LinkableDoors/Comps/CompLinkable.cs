@@ -11,21 +11,13 @@ namespace LinkableDoors
         public ILinkGroup GroupParent { get; set; }
         public PositionTag PosTag { get; set; }
         public int DistFromCenter { get; set; }
-        public float commonField { get; set; }
-        public bool synchronize { get; set; }
-
+        public float CommonField { get; set; }
+        public bool Synchronize { get; set; }
+        public Rot4 LineDirection { get; private set; }
         public IntVec3 Pos => base.parent.Position;
         public Vector3 DrawPos => base.parent.DrawPos;
         public Map Map => base.parent.Map;
         public bool IsSingle => this.directLinks.Count() == 0;
-        public Rot4 LineDirection
-        {
-            get
-            {
-                int val = this.directLinks.FirstOrDefault().Value;
-                return (val == 0 || val == 2) ? Rot4.East : Rot4.North;
-            }
-        }
 
         public LinkCallBack CallBack { get; set; }
         private Dictionary<ILinkData, int> directLinks = new Dictionary<ILinkData, int>();
@@ -47,8 +39,8 @@ namespace LinkableDoors
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             base.PostSpawnSetup(respawningAfterLoad);
+            this.LineDirection = default(Rot4);
             LinkGroupUtility.Notify_LinkableSpawned(this);
-
         }
         public override void PostDeSpawn(Map map)
         {
@@ -57,6 +49,7 @@ namespace LinkableDoors
         }
         public virtual void Notify_Linked(ILinkData other, int direction)
         {
+            this.LineDirection = (direction == 0 || direction == 2) ? Rot4.East : Rot4.North;
             this.directLinks.Add(other, direction);
         }
 

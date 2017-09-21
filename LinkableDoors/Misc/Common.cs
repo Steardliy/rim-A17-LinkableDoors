@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -6,14 +7,15 @@ namespace LinkableDoors
 {
     public interface ILinkGroup
     {
-        IEnumerable<ILinkData> Children { get; }
+        List<ILinkData> Children { get; }
+        Dictionary<PositionTag, List<ILinkData>> TagGroup { get; }
+
         IEnumerable<ILinkData> GetTagGroup(PositionTag tag);
         float GetCommonFieldSum(PositionTag tag);
         void SetCommonField(PositionTag tag, float value);
 
         void Concat(ILinkGroup other);
         void Split(ILinkData point);
-        void RecalculateCenter();
 
         bool Any();
         void Remove(ILinkData delData);
@@ -26,8 +28,8 @@ namespace LinkableDoors
 
         ILinkGroup GroupParent { get; set; }
         PositionTag PosTag { get; set; }
-        float commonField { get; set; }
-        bool synchronize { get; set; }
+        float CommonField { get; set; }
+        bool Synchronize { get; set; }
         int DistFromCenter { get; set; }
         IntVec3 Pos { get; }
         Vector3 DrawPos { get; }

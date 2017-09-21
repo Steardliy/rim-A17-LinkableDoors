@@ -7,3 +7,4 @@ C:\GitLocal\rim-A17-LinkableDoors\LinkableDoors\bin\Release\LinkableDoors.dll
 C:\GitLocal\rim-A17-LinkableDoors\LinkableDoors\bin\Release\LinkableDoors.pdb
 C:\GitLocal\rim-A17-LinkableDoors\LinkableDoors\obj\Release\LinkableDoors.dll
 C:\GitLocal\rim-A17-LinkableDoors\LinkableDoors\obj\Release\LinkableDoors.pdb
+C:\GitLocal\rim-A17-LinkableDoors\LinkableDoors\obj\Release\LinkableDoors.csprojResolveAssemblyReference.cache

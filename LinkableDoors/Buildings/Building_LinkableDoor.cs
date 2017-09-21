@@ -7,6 +7,7 @@ namespace LinkableDoors
 {
     public class Building_LinkableDoor : Building_Door
     {
+        private const float ProtrudedDoorOffset = 0.05f;
         private ILinkData linkable;
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
@@ -29,13 +30,13 @@ namespace LinkableDoors
                     if (a.DistFromCenter < this.linkable.DistFromCenter)
                     {
                         a.CallBack(base.ticksUntilClose);
-                        a.synchronize = true;
+                        a.Synchronize = true;
                     }
                 }
-                if (this.linkable.synchronize && base.ticksUntilClose <= 0)
+                if (this.linkable.Synchronize && base.ticksUntilClose <= 0)
                 {
                     base.DoorTryClose();
-                    this.linkable.synchronize = false;
+                    this.linkable.Synchronize = false;
                 }
             }
         }
@@ -51,7 +52,7 @@ namespace LinkableDoors
 
         public override void Draw()
         {
-            if (this.linkable == null || this.linkable.IsSingle)
+            if (this.linkable.IsSingle)
             {
                 base.Draw();
                 return;
@@ -68,63 +69,47 @@ namespace LinkableDoors
             float num = Mathf.Clamp01((float)this.visualTicksOpen / (float)base.TicksToOpenNow);
 
             float[] move = { 0, 0 };
-            Vector3[] offset = { default(Vector3), default(Vector3) };
-            Vector3[] vector = { default(Vector3), default(Vector3) };
-            Mesh[] mesh = { null, null };
+            int index;
 
             switch (this.linkable.PosTag)
             {
                 case PositionTag.LeftSide:
-                    this.linkable.commonField = 1f * num;
-                    move[0] = this.linkable.GroupParent.GetCommonFieldSum(PositionTag.LeftSide);
-                    vector[0] = new Vector3(0f, 0f, -1f);
-                    offset[0] = new Vector3(0f, 0.1f, 0.1f);
-                    mesh[0] = LD_MeshPool.plane10Fill;
+                    this.linkable.CommonField = 1f * num;
+                    move[0] = this.GetMoveOffset(PositionTag.LeftSide);
+                    index = 0;
                     break;
                 case PositionTag.RightSide:
-                    this.linkable.commonField = 1f * num;
-                    move[0] = this.linkable.GroupParent.GetCommonFieldSum(PositionTag.RightSide);
-                    vector[0] = new Vector3(0f, 0f, 1f);
-                    offset[0] = new Vector3(0f, 0.1f, -0.1f);
-                    mesh[0] = LD_MeshPool.plane10Fill;
+                    this.linkable.CommonField = 1f * num;
+                    move[0] = this.GetMoveOffset(PositionTag.RightSide);
+                    index = 1;
                     break;
                 case PositionTag.LeftBorder | PositionTag.LeftSide:
-                    this.linkable.commonField = 1f * num;
-                    move[0] = this.linkable.GroupParent.GetCommonFieldSum(PositionTag.LeftSide);
+                    this.linkable.CommonField = (1f - ProtrudedDoorOffset) * num;
+                    move[0] = this.GetMoveOffset(PositionTag.LeftSide);
                     move[1] = move[0];
-                    vector[0] = new Vector3(0f, 0f, -1f);
-                    vector[1] = vector[0];
-                    offset[0] = new Vector3(0f, 0f, 0.5f);
-                    offset[1] = new Vector3(0f, 0.1f, -0.23f);
-                    mesh[0] = MeshPool.plane10;
-                    mesh[1] = LD_MeshPool.plane10FillHalf;
+                    index = 2;
                     break;
                 case PositionTag.RightBorder | PositionTag.RightSide:
-                    this.linkable.commonField = 1f * num;
-                    move[0] = this.linkable.GroupParent.GetCommonFieldSum(PositionTag.RightSide);
+                    this.linkable.CommonField = (1f - ProtrudedDoorOffset) * num;
+                    move[0] = this.GetMoveOffset(PositionTag.RightSide);
                     move[1] = move[0];
-                    vector[0] = new Vector3(0f, 0f, 1f);
-                    vector[1] = vector[0];
-                    offset[0] = new Vector3(0f, 0f, -0.5f);
-                    offset[1] = new Vector3(0f, 0.1f, 0.23f);
-                    mesh[0] = MeshPool.plane10Flip;
-                    mesh[1] = LD_MeshPool.plane10FillHalf;
+                    index = 3;
                     break;
                 case PositionTag.Center:
-                    this.linkable.commonField = 0.45f * num;
-                    move[0] = this.linkable.GroupParent.GetCommonFieldSum(PositionTag.LeftSide);
-                    move[1] = this.linkable.GroupParent.GetCommonFieldSum(PositionTag.RightSide);
-                    vector[0] = new Vector3(0f, 0f, -1f);
-                    vector[1] = new Vector3(0f, 0f, 1f);
-                    mesh[0] = MeshPool.plane10;
-                    mesh[1] = MeshPool.plane10Flip;
+                    this.linkable.CommonField = (0.5f - ProtrudedDoorOffset) * num;
+                    move[0] = this.GetMoveOffset(PositionTag.LeftSide);
+                    move[1] = this.GetMoveOffset(PositionTag.RightSide);
+                    index = 4;
                     break;
                 default:
                     Log.Error("[LinkableDoors] default");
-                    vector[0] = new Vector3(0f, 0f, 1f);
-                    mesh[0] = LD_MeshPool.plane10FlipWide;
+                    index = 0;
                     break;
             }
+
+            Vector3[] coefficients = LD_MeshPool.doorMeshPosSet[index].coefficients;
+            Vector3[] offsets = LD_MeshPool.doorMeshPosSet[index].offsets;
+            Mesh[] meshes = LD_MeshPool.doorMeshPosSet[index].meshes;
 
             Rot4 rotation = base.Rotation;
             rotation.Rotate(RotationDirection.Clockwise);
@@ -132,17 +117,22 @@ namespace LinkableDoors
 
             for (int i = 0; i < 2; i++)
             {
-                if (mesh[i] != null)
+                if (meshes[i] != null)
                 {
-                    vector[i] = quat * vector[i];
-                    Vector3 vector2 = this.DrawPos;
-                    vector2.y = Altitudes.AltitudeFor(AltitudeLayer.DoorMoveable) + offset[i].y;
-                    offset[i] = quat * offset[i];
-                    vector2 += offset[i] + vector[i] * move[i];
-                    Graphics.DrawMesh(mesh[i], vector2, base.Rotation.AsQuat, this.Graphic.MatAt(base.Rotation, null), 0);
+                    Vector3 vector = this.DrawPos;
+                    vector.y = Altitudes.AltitudeFor(AltitudeLayer.DoorMoveable) + offsets[i].y;
+                    Vector3 vector2 = quat * coefficients[i];
+                    Vector3 vector3 = quat * offsets[i];
+                    vector += vector3 + vector2 * move[i];
+
+                    Graphics.DrawMesh(meshes[i], vector, base.Rotation.AsQuat, this.Graphic.MatAt(base.Rotation, null), 0);
                 }
             }
             base.Comps_PostDraw();
+        }
+        private float GetMoveOffset(PositionTag tag)
+        {
+            return this.linkable.GroupParent.GetCommonFieldSum(tag);
         }
     }
 }

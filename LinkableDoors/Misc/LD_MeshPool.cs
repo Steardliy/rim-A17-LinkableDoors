@@ -3,19 +3,31 @@ using Verse;
 
 namespace LinkableDoors
 {
+    public class MeshPosSet
+    {
+        public Vector3[] coefficients;
+        public Vector3[] offsets;
+        public Mesh[] meshes;
+
+        public MeshPosSet() { }
+        public MeshPosSet(Vector3[] c, Vector3[] o, Mesh[] m)
+        {
+            this.coefficients = c;
+            this.offsets = o;
+            this.meshes = m;
+        }
+    }
+
     [StaticConstructorOnStartup]
     public static class LD_MeshPool
     {
-        public static readonly Mesh plane10Wide;
-        public static readonly Mesh plane10FlipWide;
         public static readonly Mesh plane10Fill;
         public static readonly Mesh plane10FillHalf;
 
+        public static readonly MeshPosSet[] doorMeshPosSet;
+
         static LD_MeshPool()
         {
-            LD_MeshPool.plane10Wide = LD_MeshPool.NewPlaneMesh(new Vector2(2f, 1f), false);
-            LD_MeshPool.plane10FlipWide = LD_MeshPool.NewPlaneMesh(new Vector2(2f, 1f), true);
-
             Vector2[] uvs = new Vector2[4]
             {
                 new Vector2(0.04f, 0f),
@@ -25,6 +37,45 @@ namespace LinkableDoors
             };
             LD_MeshPool.plane10FillHalf = LD_MeshPool.NewPlaneMesh(new Vector2(0.57f, 1f), false, uvs);
             LD_MeshPool.plane10Fill = LD_MeshPool.NewPlaneMesh(new Vector2(1.2f, 1f), false, uvs);
+
+            Vector3[] vectors = new Vector3[2]
+            {
+                new Vector3(0f, 0f, -1f),
+                new Vector3(0f, 0f, 1f)
+            };
+            Vector3[] offsets = new Vector3[6]
+            {
+                new Vector3(0f, 0.1f, 0.1f),
+                new Vector3(0f, 0.1f, -0.1f),
+                new Vector3(0f, 0f, 0.5f),
+                new Vector3(0f, 0.1f, -0.23f),
+                new Vector3(0f, 0f, -0.5f),
+                new Vector3(0f, 0.1f, 0.23f)
+            };
+
+            LD_MeshPool.doorMeshPosSet = new MeshPosSet[]
+            {
+                new MeshPosSet(
+                    new Vector3[] { vectors[0], default(Vector3) },
+                    new Vector3[] { offsets[0], default(Vector3) },
+                    new Mesh[] { LD_MeshPool.plane10Fill, null }),
+                new MeshPosSet(
+                    new Vector3[] { vectors[1], default(Vector3) },
+                    new Vector3[] { offsets[1], default(Vector3) },
+                    new Mesh[] { LD_MeshPool.plane10Fill, null }),
+                new MeshPosSet(
+                    new Vector3[] { vectors[0], vectors[0] },
+                    new Vector3[] { offsets[2], offsets[3] },
+                    new Mesh[] { MeshPool.plane10, LD_MeshPool.plane10FillHalf }),
+                new MeshPosSet(
+                    new Vector3[] { vectors[1], vectors[1] },
+                    new Vector3[] { offsets[4], offsets[5] },
+                    new Mesh[] { MeshPool.plane10Flip, LD_MeshPool.plane10FillHalf }),
+                new MeshPosSet(
+                    new Vector3[] { vectors[0], vectors[1] },
+                    new Vector3[] { default(Vector3), default(Vector3) },
+                    new Mesh[] { MeshPool.plane10, MeshPool.plane10Flip })
+            };
         }
 
         static Mesh NewPlaneMesh(Vector2 size, bool flipped, Vector2[] uvs = null)
