@@ -19,7 +19,7 @@ namespace LinkableDoors
         public Map Map => base.parent.Map;
         public bool IsSingle => this.directLinks.Count() == 0;
 
-        public LinkCallBack CallBack { get; set; }
+        public Action<int> CallBack { get; set; }
         private Dictionary<ILinkData, int> directLinks = new Dictionary<ILinkData, int>();
         private CompProperties_Linkable compDef => (CompProperties_Linkable)base.props;
         

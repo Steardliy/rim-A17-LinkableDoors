@@ -21,10 +21,9 @@ namespace LinkableDoors
         void Remove(ILinkData delData);
         void Add(ILinkData newData);
     }
-    public delegate void LinkCallBack(int param);
     public interface ILinkData
     {
-        LinkCallBack CallBack { get; set; }
+        Action<int> CallBack { get; set; }
 
         ILinkGroup GroupParent { get; set; }
         PositionTag PosTag { get; set; }
