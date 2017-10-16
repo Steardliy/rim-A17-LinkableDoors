@@ -10,9 +10,9 @@ namespace LinkableDoors
     {
         public ILinkGroup GroupParent { get; set; }
         public PositionTag PosTag { get; set; }
-        public int DistFromCenter { get; set; }
-        public float CommonField { get; set; }
-        public bool Synchronize { get; set; }
+        public int DistFromCenter { get; set; } = 0;
+        public float CommonField { get; set; } = 0;
+        public bool Synchronize { get; set; } = false;
         public Rot4 LineDirection { get; private set; }
         public IntVec3 Pos => base.parent.Position;
         public Vector3 DrawPos => base.parent.DrawPos;
@@ -34,6 +34,9 @@ namespace LinkableDoors
                 a.Key.Notify_UnLinked(this);
             };
             this.directLinks.Clear();
+            this.Synchronize = false;
+            this.DistFromCenter = 0;
+            this.PosTag = PositionTag.Center;
         }
 
         public override void PostSpawnSetup(bool respawningAfterLoad)
